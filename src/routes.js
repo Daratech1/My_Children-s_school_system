@@ -28,6 +28,7 @@ import DashboardPage from "views/Dashboard/Dashboard.js";
  import Settings from "views/Settings/settings.js"
 import Profile from "views/Profile/Profile";
 import MyChildren from "views/MyChildren/MyChildren";
+import Reports from "views/Reports/Reports";
 import ChildChart from "views/Chart/ChildChart";
 import AbsenceChart from "views/Chart/calendarChart";
 import Payment from "views/Payment/Payment";
@@ -84,6 +85,14 @@ const dashboardRoutes = [
     rtlName: "أبناء",
     icon: LocalLibraryIcon,
     component: MyChildren,
+    layout: "/admin",
+  },
+  {
+    path: "/reports",
+    name: "",
+    rtlName: "أبناء",
+    icon: LocalLibraryIcon,
+    component: Reports,
     layout: "/admin",
   },
   {

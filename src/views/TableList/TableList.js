@@ -39,9 +39,9 @@ const styles = (theme) => ({
     fontWeight: "bold",
     color: "#312163",
   },
-  cardBodyR_padding:{
-    padding:"0"
-  },
+  // cardBodyR_padding:{
+  //   padding:"0"
+  // },
   addButton: {
     direction: "ltr",
     float: "left",

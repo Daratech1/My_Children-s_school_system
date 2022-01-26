@@ -10,6 +10,7 @@ import assessmentData from './StudentAssessment'
 import mobileCode from './mobileCode'
 import PaymentData from './paymentMethodReduser'
 import transactionData from "./tansactionReduser"
+import couponData from "./CouponReduser"
 export default combineReducers({
     data,
     alert,
@@ -21,5 +22,6 @@ export default combineReducers({
     assessmentData,
     mobileCode,
     PaymentData,
-    transactionData
+    transactionData,
+    couponData
 })

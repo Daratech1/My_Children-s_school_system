@@ -1,7 +1,7 @@
 var Promise = require("promise");
 import instance from "uitils/api";
 
-import { TRANSACTION_METHOD } from "./types";
+import { TRANSACTION_METHOD} from "./types";
 export const getTransactoinMethode = (studentId , tansctionId , data) => (dispatch) => {
 //   const thePath = window.location.pathname;
 //   const lastItem = thePath.substring(thePath.lastIndexOf("/") + 1);
@@ -19,3 +19,5 @@ export const getTransactoinMethode = (studentId , tansctionId , data) => (dispat
 
   return promise;
 };
+
+

@@ -1,18 +1,18 @@
-import { TRANSACTION_METHOD } from "../action/types";
+import { COUPON_METHOD } from "../action/types";
 
 const initialState = {
-    transactionData: {},
+    couponData:{},
     loading: true,
 };
 export default (state = initialState, action) => {
   const { type, payload ,date } = action;
   switch (type) {
-    case TRANSACTION_METHOD:
+    
+      case COUPON_METHOD:
       return {
-        transactionData: payload,
+        couponData: payload,
         loading: false,
       };
-      
     default:
       return state;
     }

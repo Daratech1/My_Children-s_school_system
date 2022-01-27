@@ -51,7 +51,6 @@ const Paybook = ({ getPaymentMethode, PaymentData: { PaymentData } }) => {
     setMyParam(location.state.myParam)
     getPaymentMethode(location.state.myParam);
   }, [getPaymentMethode]);
-
   return (
     <div>
       
@@ -110,7 +109,7 @@ const Paybook = ({ getPaymentMethode, PaymentData: { PaymentData } }) => {
                     {ele.amount_after_discount - ele.paid_amount}
                   </TableCell>
                   <TableCell className={classes.textStartBody}>
-                    {ele.payment_status}
+                    {ele.payment_status == 0 ? "بنتظار الدفع" : "تم الدفع"}
                   </TableCell>
 
                   <TableCell className={classes.textStartBody}>
@@ -139,6 +138,8 @@ const Paybook = ({ getPaymentMethode, PaymentData: { PaymentData } }) => {
                   </TableCell>
                 </TableRow>
               ))
+            ) : PaymentData.transactions === undefined ? (
+              <TableCell style={{padding:"50px" ,textAlign:"center" , width:"100%"}}> عفوا لايوجد سجل مدفوعات لهذا الطالب  ...</TableCell>
             ) : (
                 <TableCell style={{padding:"50px" ,textAlign:"center" , width:"100%"}}> أنتظر لجلب البيانات من فضلك ...</TableCell>
             )

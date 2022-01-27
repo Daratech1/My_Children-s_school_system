@@ -33,6 +33,10 @@ export default function CustomTable(props) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const { tableHead, tableData, handleOpen, getId, handleOpenMeeting } = props;
+
+  
+
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
     getId(event.currentTarget.id);
@@ -59,7 +63,6 @@ export default function CustomTable(props) {
                   <TableCell
                   key={key}
                     className={classes.tableCell + " " + classes.tableHeadCell}
-                    key={key}
                   >
                     {prop}
                   </TableCell>
@@ -71,7 +74,6 @@ export default function CustomTable(props) {
         <TableBody className={classes.tableBody}>
           {tableData.length > 0 ? (
             tableData.map((prop) => {
-              // console.log(prop.id);
               return (
                 <tr key={prop.id}>
                   <td className="table-avatar">
@@ -104,7 +106,7 @@ export default function CustomTable(props) {
                       <></>
                     )}
 
-                    <div onClick={handleClick}>
+                    {/* <div onClick={handleClick}>
                       <Button
                         variant="outlined"
                         color="primary"
@@ -113,7 +115,7 @@ export default function CustomTable(props) {
                       >
                         الدفع
                       </Button>
-                    </div>
+                    </div> */}
                   </td>
                   <td 
                  

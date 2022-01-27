@@ -4,7 +4,7 @@ const token = JSON.parse(localStorage.getItem("token"));
 axios.defaults.withCredentials = true;
 
 const instance = axios.create({
-  baseURL: "http://admin.getech-eg.com/public",
+  baseURL: "http://admin.algorithmltd.com/public",
   headers: {
     Authorization: `Bearer ${token}`,
     'X-Custom-Header': 'XMLHttpRequest'
@@ -24,7 +24,6 @@ instance.interceptors.response.use(
         "Unauthenticated"
     ) {
       console.log("token di hapus dan logout kehalaman login");
-      console.log(error.response);
       localStorage.removeItem("token");
 
       return new Promise( ()=> {

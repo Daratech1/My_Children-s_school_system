@@ -81,7 +81,7 @@ export default function SliderCard2() {
           </CardContent>
         </Card>
       </Grid>
-      <Grid item xs={6} sm={3} className={classes.fullwidth}>
+      <Grid item xs={6} sm={3} className={classes.fullwidth} onClick={()=>history.push('/admin/reports')}>
         <Card sx={{ maxWidth: 345 }} className={classes.cardDash}>
           <CardMedia
             component="img"
@@ -99,7 +99,7 @@ export default function SliderCard2() {
               component="h2"
               className={classes.mainTitle}
             >
-              نداء طالب
+               تقارير
             </Typography>
             <Typography
               variant="body2"
@@ -107,7 +107,7 @@ export default function SliderCard2() {
               component="p"
               className={classes.mainTitle}
             >
-              متابعة الطلب
+              متابعة تقارير
             </Typography>
           </CardContent>
         </Card>

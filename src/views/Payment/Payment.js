@@ -22,11 +22,15 @@ import Select from "@material-ui/core/Select";
 // import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 // import Checkbox from "@material-ui/core/Checkbox";
-// import TextField from "@material-ui/core/TextField";
+import TextField from "@material-ui/core/TextField";
+import clsx from 'clsx';
+import InputAdornment from '@material-ui/core/InputAdornment';
+
+
 import Button from "@material-ui/core/Button";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
-// import Input from "@material-ui/core/Input";
+import Input from "@material-ui/core/Input";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Radio from "@material-ui/core/Radio";
@@ -43,7 +47,7 @@ import { getTransactoinMethode } from "../../action/transactionPay";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import { useLocation } from "react-router-dom";
-
+import Coupon from "./Coupone"
 // ======================================================
 
 // start check radio
@@ -88,6 +92,19 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexWrap: "wrap",
   },
+  flexPromo:{
+    display:"flex",
+    justifyContent:"space-between"
+  },
+  promoInput:{
+    padding:"7px",
+    width:"auto",
+    borderRadius:"10px !important",
+    borderTopLeftRadius: '0 !important',
+    borderBottomLeftRadius:' 0 !important',
+    background:"#eee"
+  }
+  ,
   textField: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
@@ -140,19 +157,26 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    border:"0"
   },
   payforImg: {
     width: "100%",
-    height: "100%",
-    margin: "50px auto",
+    height:"100px",
+    margin: "15px auto",
   },
   storNumber:{
     color: "#8e24aa",
-    fontSize: '25px',
-    display: "block",
+    fontSize: '20px',
     textAlign: "center",
     padding: "20px 0",
-    textShadow: "-2px 3px 2px #aaa",
+    textShadow: "-1px 1px 1px #aaa",
+  },
+  storNumber2:{
+    color: "#20c18d",
+    fontSize: '20px',
+    textAlign: "center",
+    padding: "20px 0",
+    textShadow: "-1px 1px 1px #aaa",
   },
   modal: {
     display: "flex",
@@ -339,10 +363,9 @@ const Payment = ({
       location.state.transactionId,
       { method_id: 3 }
     );
-  }, getTransactoinMethode);
+  }, [getTransactoinMethode]);
 
   // *********************************
-console.log(transactionData)
 
 const [open2, setOpen2] = React.useState(true);
 
@@ -550,21 +573,7 @@ const handleClosePopUp = () => {
                           );
                         })}
 
-                      <Grid item md={12} xs={12} style={{padding:"0 10px"}}>
-                        <span>المبلغ المستحق الدفع: </span>
-                        <span className={classes.storNumber}>
-                          {window.localStorage.getItem("valueone") -
-                            window.localStorage.getItem("valuetwo")}
-                        </span>
-                      </Grid>
-                      <Grid item md={12} xs={12}>
-                        <img
-                          src={wallet}
-                          alt={wallet}
-                          className={classes.payforImg}
-                        />
-                      </Grid>
-
+                        <Coupon studentId={location.state.studentId} transactionId={location.state.transactionId} />
                       <Grid item md={12} xs={12}>
                         <div className={classes.pairBookBtn}>
                           <button

@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import axios from "axios";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 // core components
@@ -25,8 +24,18 @@ import GppGoodIcon from "@mui/icons-material/GppGood";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import { getStudents } from "action/students";
-import { getApplication } from "action/applications";
+import { getApplication,getPlan,sendPlanInfo } from "action/applications";
 import StudentCallStepper from "components/stepper/studentCallStepper";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import Typography from "@mui/material/Typography";
+import CardFooter from "components/Card/CardFooter";
+import {usePagination,usePagination1} from "components/pagniation/pagniation";
+import { Pagination } from "@mui/material";
+import PaginationItem from '@mui/material/PaginationItem';
+
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+
 const styles = (theme) => ({
   tables: {
     marginTop: "70px",
@@ -38,9 +47,6 @@ const styles = (theme) => ({
     margin: "0",
     fontWeight: "bold",
     color: "#312163",
-  },
-  cardBodyR_padding:{
-    padding:"0"
   },
   addButton: {
     direction: "ltr",
@@ -73,6 +79,15 @@ const styles = (theme) => ({
     borderRadius: "20px",
     [theme.breakpoints.down("1g")]: {
       width: "80%",
+    },
+  },
+  paper2: {
+    backgroundColor: theme.palette.background.paper,
+    padding: theme.spacing(2, 4, 3),
+    width: "30%",
+    borderRadius: "20px",
+    [theme.breakpoints.down("1g")]: {
+      width: "60%",
     },
   },
   paper1: {
@@ -109,20 +124,41 @@ const styles = (theme) => ({
 
 const useStyles = makeStyles(styles);
 
-const TableList = ( { getStudents, students: { students },getApplication, applications:{applications} }) => {
+const TableList = ( { getStudents,getPlan,sendPlanInfo, students: { students },getApplication,data:{transportations}, applications:{applications,plans,msg} }) => {
   const classes = useStyles();
-  axios.defaults.withCredentials = true;
   const [open, setOpen] = React.useState(false);
   const [permissionOpen, setPermissionOpen] = React.useState(false);
   const [studtentCallOpen, setStudentCallOpen] = React.useState(false);
   const [payOpen, setPayOpen] = React.useState(false);
-  const [plans, setPlans] = React.useState([]);
+  const [appId,setAppId] = useState(1)
+  const [showMsg,setShowMsg] = useState(false)
+  const [page, setPage] = useState(1);
+  const [page1, setPage1] = useState(1);
+
+  const PER_PAGE = 5;
+
+  const count = Math.ceil(applications.length / PER_PAGE);
+  const {currentData,jump} = usePagination(applications, PER_PAGE);
+
+  const count1 = Math.ceil(students.length / PER_PAGE);
+  const {currentData1,jump1} = usePagination1(students, PER_PAGE);
 
   useEffect(() => {
     getStudents();
     getApplication();
   }, [getStudents, getApplication]);
 
+  const handleChangePag = (e, p) => {
+    setPage(p);
+    jump(p);
+  };
+  const handleChangePag1 = (e, p) => {
+    setPage1(p);
+    jump1(p);
+  };
+  const handleShow = ()=>{
+    setShowMsg(true)
+  }
   const handleOpen = () => {
     setOpen(true);
   };
@@ -144,18 +180,10 @@ const handleClosePermission = useCallback(() => {
 const handleCloseCallStudent = useCallback(() => {
   setStudentCallOpen(false);
 }, [studtentCallOpen]);
-  const getPlan = (id) => {
-    axios
-      .get(
-        `http://admin.getech-eg.com/public/api/user/fake/plan?student_id=${id}`
-      )
-      .then(function (response) {
-        const result = Object.values(response.data);
-        setPlans(result);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+  const getPlanItems = (id) => {
+    getPlan(id)
+    setAppId(id)
+    setShowMsg(false)
   };
   const handlePayOpen = () => {
     setPayOpen(true);
@@ -172,12 +200,10 @@ const handleCloseCallStudent = useCallback(() => {
   };
 
   const params = new URLSearchParams(window.location.search)
-  console.log(params)
   return (
     <>
     <div className={classes.tables}>
     <div>
-        
         <Modal
           aria-labelledby="transition-modal-title"
           aria-describedby="transition-modal-description"
@@ -266,12 +292,19 @@ const handleCloseCallStudent = useCallback(() => {
                   "",
                   "",
                 ]}
-                tableData={students}
+                tableData={currentData1()}
                 handleOpen={handlePayOpen}
-                getId={getPlan}
                 handleOpenMeeting={handleOpenMeeting}
               />
             </CardBody>
+            <CardFooter>
+              <Pagination count={count1} color="secondary"   size="large" page={page1}  onChange={handleChangePag1}   renderItem={(item) => (
+             <PaginationItem
+            components={{ previous: ChevronRightIcon, next: ChevronLeftIcon }}
+            {...item}
+          />
+        )}/> 
+              </CardFooter>
           </Card>
         </GridItem>
       </GridContainer>
@@ -295,11 +328,19 @@ const handleCloseCallStudent = useCallback(() => {
                   "",
                   "",
                 ]}
-                tableData={applications}
-                getId={getPlan}
+                tableData={currentData()}
+                getId={getPlanItems}
                 handleOpenMeeting={handleOpenMeeting}
                 handleOpen={handlePayOpen}
               />
+              <CardFooter>
+              <Pagination count={count} color="secondary"   size="large" page={page}  onChange={handleChangePag}   renderItem={(item) => (
+             <PaginationItem
+            components={{ previous: ChevronRightIcon, next: ChevronLeftIcon }}
+            {...item}
+          />
+        )}/> 
+              </CardFooter>
             </CardBody>
           </Card>
         </GridItem>
@@ -378,8 +419,14 @@ const handleCloseCallStudent = useCallback(() => {
           }}
         >
           <Fade in={payOpen}>
-            <div className={classes.paper1}>
-              <PricingTable plans={plans}  />
+            <div className={showMsg ? classes.paper2 : classes.paper1}>
+              {showMsg ?  <div className="message-box">
+              <CheckCircleIcon color="info" />
+              <Typography variant="h5" align="center" style={{marginTop: "30px"}}>
+                {msg.message}
+              </Typography>
+            </div> :  <PricingTable plans={plans} applications={applications} transportations={transportations} sendPlanInfo={sendPlanInfo} appId={appId} handleShow={handleShow}/>}
+
             </div>
           </Fade>
         </Modal>
@@ -392,14 +439,19 @@ const handleCloseCallStudent = useCallback(() => {
 TableList.propTypes = {
   getStudents: PropTypes.func.isRequired,
   getApplication: PropTypes.func.isRequired,
+  getPlan:PropTypes.func.isRequired,
+  sendPlanInfo:PropTypes.func.isRequired,
   students: PropTypes.object,
   applications: PropTypes.object,
+  data:PropTypes.object,
+  msg:PropTypes.object
 };
 const mapStateToProps = (state) => ({
   students: state.students,
   applications: state.applications,
+  data: state.data.staticData,
 });
 
-export default connect(mapStateToProps, { getStudents, getApplication })(
+export default connect(mapStateToProps, { getStudents, getApplication,getPlan,sendPlanInfo })(
   TableList
 );

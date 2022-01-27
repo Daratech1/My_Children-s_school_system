@@ -334,10 +334,8 @@ const useForm = (num) => {
       ...values,
       [name]: val,
     });
-    console.log(Object.keys(values).length)
 
     if (Object.keys(values).length >= num) {
-      console.log(Object.keys(values).length)
       setDisableBtn(false);
 
     }else{

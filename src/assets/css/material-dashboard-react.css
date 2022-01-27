@@ -319,8 +319,15 @@ footer ul li a:hover {
 .Carousel-prev-98 {
   left: -10px !important;
 }
-
+.MuiPaper-elevation8 {
+  box-shadow: 1px 1px 2px #b7b3c142 !important;
+}
 /************* pricing style **************/
+.plan-action{
+  display: flex;
+  width: 100;
+  direction: ltr;
+}
 .pricing-table {
   direction: rtl;
   background-image: url("../img/pricing-bg.png");
@@ -334,10 +341,11 @@ footer ul li a:hover {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-evenly;
+  margin-bottom: 16px;
 }
 .pricing-items .item {
   position: relative;
-  width: 16rem;
+  width: 20rem;
   border-radius: 20px;
   direction: rtl;
   background-color: #f6f6f6;

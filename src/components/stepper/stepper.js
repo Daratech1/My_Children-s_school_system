@@ -24,8 +24,10 @@ import OrderForm from "components/inputs/orderForm";
 import useForm from "hooks/useForm";
 import { createApplication } from "action/applications";
 import { sendCode,verifyCode } from "action/mobileCode";
-
-const steps = ["", "", ""];
+import SecondOrderForm from "components/inputs/secondOrderForm";
+import FeedIcon from '@mui/icons-material/Feed';
+import secondUseForm from "hooks/secondUseform";
+const steps = ["", "", "",""];
 
 const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
   [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -74,8 +76,9 @@ function ColorlibStepIcon(props) {
 
   const icons = {
     1: <SettingsIcon />,
-    2: <GroupAddIcon />,
-    3: <VideoLabelIcon />,
+    2: <FeedIcon />,
+    3: <GroupAddIcon />,
+    4: <VideoLabelIcon />,
   };
 
   return (
@@ -107,20 +110,33 @@ ColorlibStepIcon.propTypes = {
 };
 
 const theme = createTheme();
-const fieldNum = 13
+const fieldNum = 7
 const Checkout = ({ handleClose, createApplication,sendCode,verifyCode,code,user:{phone}  }) => {
   const [activeStep, setActiveStep] = React.useState(0);
   const [validCode, setValidCode] = React.useState(false);
-  
+  const [fieldNum2,setFieldNum2] =  React.useState(5)
+
   const finishForm = () => {
      handleClose();
-     createApplication(values);
+     if(fieldNum2 == 7){
+      createApplication(Object.assign(values,values2,{ "transportation_required": true}));
+
+     }else{
+      createApplication(Object.assign(values,values2,{ "transportation_required": false}));
+
+     }
   };
+  const getTransRequired = (e)=>{
+    if(e){
+      setFieldNum2(7)
+    }
+  }
   const { handleChange, values, errors,handleSubmit, disableBtn } = useForm(fieldNum);
+  const { handleChange2, values2, errors2,handleSubmit2, disableBtn2 } = secondUseForm(fieldNum2);
+
 
 
   const checkValidCode = (input) => {
-    console.log(code,input)
     if (input === code) {
       setValidCode(true);
     }else{
@@ -130,13 +146,16 @@ const Checkout = ({ handleClose, createApplication,sendCode,verifyCode,code,user
 
   const handleNext = () => {
     if (activeStep === 0) {
-      sendCode();
       handleSubmit();
       setActiveStep(activeStep + 1);
     } else if (activeStep === 1) {
+      handleSubmit2();
       setActiveStep(activeStep + 1);
-      verifyCode();
-    }
+      sendCode();
+    } else if (activeStep === 2) {
+    setActiveStep(activeStep + 1);
+    verifyCode();
+  }
   };
 
   const handleBack = () => {
@@ -157,6 +176,17 @@ const Checkout = ({ handleClose, createApplication,sendCode,verifyCode,code,user
     } else if (activeStep === 1) {
       return(
         <Button
+        disabled={disableBtn2}
+        variant="contained"
+        onClick={handleNext}
+        sx={{ mt: 3, ml: 1 }}
+      >
+        التالى
+      </Button>
+      )
+    } else if (activeStep === 2) {
+      return(
+        <Button
         disabled={!validCode}
         variant="contained"
         onClick={handleNext}
@@ -173,12 +203,14 @@ const Checkout = ({ handleClose, createApplication,sendCode,verifyCode,code,user
       case 0:
         return <OrderForm errors={errors} handleChange={handleChange} />;
       case 1:
+        return <SecondOrderForm errors2={errors2} getTransRequired={getTransRequired} handleChange2={handleChange2} />;
+      case 2:
         return (
           <>
             <VerfyCode checkValidCode={checkValidCode} phone={phone} />
           </>
         );
-      case 2:
+      case 3:
         return (
           <>
             <div className="message-box">
@@ -244,7 +276,7 @@ Checkout.propTypes = {
   createApplication: PropTypes.func,
   sendCode: PropTypes.func,
   verifyCode: PropTypes.func,
-  code: PropTypes.string,
+  code: PropTypes.number,
 };
 const mapStateToProps = (state) => ({
   code: state.mobileCode.code,

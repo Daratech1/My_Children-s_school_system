@@ -4,7 +4,7 @@ const token = JSON.parse(localStorage.getItem("token"));
 axios.defaults.withCredentials = true;
 
 const instance = axios.create({
-  baseURL: "http://admin.algorithmltd.com/public",
+  baseURL: "http://api.bion-advertising.com/public",
   headers: {
     Authorization: `Bearer ${token}`,
     'X-Custom-Header': 'XMLHttpRequest'

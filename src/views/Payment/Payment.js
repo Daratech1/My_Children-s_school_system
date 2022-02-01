@@ -121,8 +121,8 @@ const useStyles = makeStyles((theme) => ({
     border: "1px solid #ddd",
     marginTop: window.screen.availWidth < 780 ? "60px" : "20px",
     borderRadius: "10px",
-    paddingTop: "20px",
-    paddingBottom: "20px",
+    paddingTop: "10px",
+    paddingBottom: "10px",
   },
   form_padding: {
     padding: "10px 20px",
@@ -426,6 +426,10 @@ const handleClosePopUp = () => {
           <h4 className={classes.textCenter}>
             طرق الدفع <AttachMoneyIcon />{" "}
           </h4>
+          <div style={{width:"50%", margin:"auto",border:"1px solid #ddd",padding:"10px" , borderRadius:"10px"}}>
+            <Coupon studentId={location.state.studentId} transactionId={location.state.transactionId} />
+          </div>
+         
           {/* start icons part */}
           <Grid xs={12} className={classes.form_padding}>
             <div className="flexing_items">
@@ -573,8 +577,10 @@ const handleClosePopUp = () => {
                           );
                         })}
 
-                        <Coupon studentId={location.state.studentId} transactionId={location.state.transactionId} />
+                        {/* <Coupon studentId={location.state.studentId} transactionId={location.state.transactionId} /> */}
+
                       <Grid item md={12} xs={12}>
+                      <img src={wallet} alt={wallet} className={classes.payforImg} />
                         <div className={classes.pairBookBtn}>
                           <button
                             type="submit"
@@ -612,16 +618,17 @@ const handleClosePopUp = () => {
                   spacing={2}
                   className={classes.custom_border}
                 >
-                  <img
+                  {/* <img
                     src={wallet}
                     alt={wallet}
                     width={150}
                     height={70}
                     className={classes.custom_img}
-                  />
+                  /> */}
 
                   <Grid item md={12} xs={12}>
-                    <FormControl style={{ width: "100%" }}>
+                    
+                    {/* <FormControl style={{ width: "100%" }}>
                       <InputLabel
                         className={classes.textRight}
                         id="demo-controlled-open-select-label"
@@ -654,7 +661,8 @@ const handleClosePopUp = () => {
                           );
                         })}
                       </Select>
-                    </FormControl>
+                    </FormControl> */}
+                    {/* <Coupon studentId={location.state.studentId} transactionId={location.state.transactionId} /> */}
                   </Grid>
 
                   <Grid item md={12} xs={12} className="bank_title_text">
@@ -715,6 +723,8 @@ const handleClosePopUp = () => {
                     className={classes.custom_border}
                   >
                     <Grid container>
+                    {/* <Coupon studentId={location.state.studentId} transactionId={location.state.transactionId} /> */}
+
                       <h5 style={{ padding: " 0 10px" }}>
                         {" "}
                         برجاء التوجه الي المدرسه لدفع المصاريف.

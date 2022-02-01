@@ -11,6 +11,9 @@ import mobileCode from './mobileCode'
 import PaymentData from './paymentMethodReduser'
 import transactionData from "./tansactionReduser"
 import couponData from "./CouponReduser"
+import reportsData_PER from "./reportsReduser";
+import reportsData_ATTA from "./reportattandance";
+
 export default combineReducers({
     data,
     alert,
@@ -23,5 +26,7 @@ export default combineReducers({
     mobileCode,
     PaymentData,
     transactionData,
-    couponData
+    couponData,
+    reportsData_PER,
+    reportsData_ATTA
 })

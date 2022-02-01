@@ -19,8 +19,7 @@ const useStyles = makeStyles((theme) => ({
     padding: "7px",
     width: "auto",
     borderRadius: "10px !important",
-    borderTopLeftRadius: "0 !important",
-    borderBottomLeftRadius: " 0 !important",
+
     background: "#eee",
   },
   payforImg: {
@@ -86,9 +85,12 @@ const Coupon = ({
     e.preventDefault();
     if (couponValue !== "") {
       getCouponMethode(studentId, transactionId, { coupon: couponValue });
-      setCouponValue("")
+      document.getElementById("d-block").style.display = "block"
     }
   };
+useEffect(() => {
+  getCouponMethode(studentId, transactionId,{coupon:couponValue});
+} , [studentId , transactionId])
 
   return (
     <>
@@ -141,9 +143,10 @@ const Coupon = ({
       ) : null}
 
       <Grid item md={12} xs={12}>
-        <img src={wallet} alt={wallet} className={classes.payforImg} />
+        {/* <img src={wallet} alt={wallet} className={classes.payforImg} /> */}
       </Grid>
-      <form style={{ marginBottom: "15px" }} onSubmit={handelClickCoupon}>
+      <form onSubmit={handelClickCoupon}>
+
         <Grid
           item
           md={12}
@@ -172,6 +175,8 @@ const Coupon = ({
             تطبيق
           </Button>
         </Grid>
+        <div style={{display:"none"}} id="d-block">
+
         {couponData.data !== undefined && couponData.data.is_coupon_valid ? (
           <div className={classes.massagePair}>
             <p className={classes.massageTexst} style={{ color: "green" }}>
@@ -185,6 +190,8 @@ const Coupon = ({
             </p>
           </div>
         )}
+        </div>
+
         {couponData.data !== undefined &&
         couponData.data.amount_after_discount &&
         // (

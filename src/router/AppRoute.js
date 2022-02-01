@@ -6,7 +6,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import RTL from "layouts/RTL.js";
 import Login from "views/login/login";
 import Register from "views/register/register";
-
+import GeneratePDF from "components/PDF/generatePDF.js";
 import PrivateRoute from "./PrivateRoute.js";
 
 // Alert compoent
@@ -21,6 +21,7 @@ export default function AppRoute() {
 
       <Switch>
         <Route path="/login" component={Login} />
+        <Route path="/reports" component={GeneratePDF} />
         <Route path="/register" component={Register} />
         <PrivateRoute  path="/admin" component={RTL} />
       </Switch>

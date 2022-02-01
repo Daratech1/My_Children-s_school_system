@@ -23,20 +23,18 @@ import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
 import LocalLibraryIcon from "@material-ui/icons/LocalLibrary";
 // core components/views for Admin layout
 import DashboardPage from "views/Dashboard/Dashboard.js";
-// import UserProfile from "views/UserProfile/UserProfile.js";
- import TableList from "views/TableList/TableList.js";
- import Settings from "views/Settings/settings.js"
+import TableList from "views/TableList/TableList.js";
+import Settings from "views/Settings/settings.js"
 import Profile from "views/Profile/Profile";
 import MyChildren from "views/MyChildren/MyChildren";
 import Reports from "views/Reports/Reports";
 import ChildChart from "views/Chart/ChildChart";
+import Reports from "views/Reports/Reports";
 import AbsenceChart from "views/Chart/calendarChart";
 import Payment from "views/Payment/Payment";
 import Paybook from "views/paybook/Paybook";
 import Permissions from "views/Permissions/Permissions";
-// import RequestDetails from "views/RequestDetails/RequestDetails";
-// import Typography from "views/Typography/Typography.js";
-// import Icons from "views/Icons/Icons.js";
+
 
 const dashboardRoutes = [
   {
@@ -53,6 +51,14 @@ const dashboardRoutes = [
     rtlName: "أبنائى",
     icon: WcIcon,
     component: TableList,
+    layout: "/admin",
+  },
+  {
+    path: "/reports",
+    name: "",
+    rtlName: "أبناء",
+    icon: LocalLibraryIcon,
+    component: Reports,
     layout: "/admin",
   },
   {

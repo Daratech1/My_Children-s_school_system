@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
     padding: "7px",
     width: "auto",
     borderRadius: "10px !important",
+
     background: "#eee",
   },
   payforImg: {
@@ -91,6 +92,7 @@ const Coupon = ({
 useEffect(() => {
   getCouponMethode(studentId, transactionId,{coupon:couponValue});
 } , [studentId , transactionId])
+
   return (
     <>
       <Grid
@@ -145,6 +147,7 @@ useEffect(() => {
         {/* <img src={wallet} alt={wallet} className={classes.payforImg} /> */}
       </Grid>
       <form onSubmit={handelClickCoupon}>
+
         <Grid
           item
           md={12}
@@ -174,6 +177,7 @@ useEffect(() => {
           </Button>
         </Grid>
         <div style={{display:"none"}} id="d-block">
+
         {couponData.data !== undefined && couponData.data.is_coupon_valid ? (
           <div className={classes.massagePair}>
             <p className={classes.massageTexst} style={{ color: "green" }}>
@@ -188,6 +192,7 @@ useEffect(() => {
           </div>
         )}
         </div>
+
         {couponData.data !== undefined &&
         couponData.data.amount_after_discount &&
         // (
@@ -226,3 +231,4 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps, { getCouponMethode })(Coupon);
+

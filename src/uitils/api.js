@@ -5,6 +5,7 @@ axios.defaults.withCredentials = true;
 
 const instance = axios.create({
   baseURL: "http://api.bion-advertising.com/public",
+
   headers: {
     Authorization: `Bearer ${token}`,
     'X-Custom-Header': 'XMLHttpRequest'
@@ -24,7 +25,6 @@ instance.interceptors.response.use(
         "Unauthenticated"
     ) {
       console.log("token di hapus dan logout kehalaman login");
-      console.log(error.response);
       localStorage.removeItem("token");
 
       return new Promise( ()=> {

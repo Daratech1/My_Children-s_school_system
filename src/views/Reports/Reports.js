@@ -43,6 +43,7 @@ const GreenRadio = withStyles({
   },
   checked: {},
 })((props) => <Radio color="default" {...props} />);
+
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -73,6 +74,7 @@ function a11yProps(index) {
   return {
     id: `scrollable-force-tab-${index}`,
     "aria-controls": `scrollable-force-tabpanel-${index}`,
+
   };
 }
 
@@ -130,6 +132,7 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: "1px 1px 2px #aaa",
     fontSize: "14px",
   },
+
 }));
 
 // table
@@ -186,6 +189,7 @@ const Reports = ({
   };
 
   // for main tabs function
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -303,6 +307,7 @@ const Reports = ({
   return (
     <div className={classes.root}>
       {/* pair Tabs Start */}
+
       <AppBar position="static" color="default">
         <Tabs
           value={value}
@@ -717,6 +722,7 @@ const Reports = ({
         {/* جدول الاستئذان End */}
 
       </TabPanel>
+
     </div>
   );
 };
@@ -747,3 +753,4 @@ export default connect(mapStateToProps, {
   getApplication,
   getStaticData,
 })(Reports);
+

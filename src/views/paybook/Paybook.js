@@ -52,6 +52,7 @@ const Paybook = ({ getPaymentMethode, PaymentData: { PaymentData } }) => {
     getPaymentMethode(location.state.myParam);
   }, [getPaymentMethode]);
   console.log(PaymentData.transactions)
+
   return (
     <div>
       

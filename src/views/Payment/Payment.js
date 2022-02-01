@@ -578,6 +578,7 @@ const handleClosePopUp = () => {
                         })}
 
                         {/* <Coupon studentId={location.state.studentId} transactionId={location.state.transactionId} /> */}
+
                       <Grid item md={12} xs={12}>
                       <img src={wallet} alt={wallet} className={classes.payforImg} />
                         <div className={classes.pairBookBtn}>

@@ -100,6 +100,7 @@ export default function SliderCard2() {
               className={classes.mainTitle}
             >
               تقارير
+
             </Typography>
             <Typography
               variant="body2"
@@ -108,6 +109,7 @@ export default function SliderCard2() {
               className={classes.mainTitle}
             >
               متابعة التقارير
+
             </Typography>
           </CardContent>
         </Card>

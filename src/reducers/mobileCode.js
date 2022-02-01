@@ -1,7 +1,7 @@
 import { SEND_CODE,VERIFY_CODE } from "../action/types";
 
 const initialState = {
-  code: '',
+  code: 0,
   loading: true,
 };
 export default (state = initialState, action) => {

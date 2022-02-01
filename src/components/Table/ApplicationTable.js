@@ -40,6 +40,8 @@ export default function AppTable(props) {
     getId(event.currentTarget.id);
   };
   const [filterobj, setFilterobj] = useState({});
+
+  
   const handleClose = () => {
     setAnchorEl(null);
     handleOpenMeeting();
@@ -56,24 +58,22 @@ export default function AppTable(props) {
   const bodyData = tableData.map((prop, i) => {
     return (
       <tr key={prop.id}>
-        <td className="table-avatar">
-          {prop.gender_id === "2" ? (
-            <Avatar
-              alt="Remy Sharp"
-              name={prop.id}
-              src="https://image.flaticon.com/icons/png/512/190/190600.png"
-              className={classes.large}
-              onClick={test}
-            />
-          ) : (
-            <Avatar
-              alt=""
-              src="https://media.istockphoto.com/vectors/european-in-hijab-vector-illustration-a-fairskinned-muslim-woman-vector-id1211606262?k=20&m=1211606262&s=612x612&w=0&h=cNHeekspjhRupOGa2uylejnznaq8huJobb0uYoeSop0="
-              className={classes.large}
-            />
-          )}
-          <span>{prop.student_name}</span>{" "}
-        </td>
+          <td className="table-avatar">
+                    {prop.gender_id === "1" ? (
+                      <Avatar
+                        alt="Remy Sharp"
+                        src="https://image.flaticon.com/icons/png/512/190/190600.png"
+                        className={classes.large}
+                      />
+                    ) : (
+                      <Avatar
+                        alt=""
+                        src="https://media.istockphoto.com/vectors/european-in-hijab-vector-illustration-a-fairskinned-muslim-woman-vector-id1211606262?k=20&m=1211606262&s=612x612&w=0&h=cNHeekspjhRupOGa2uylejnznaq8huJobb0uYoeSop0="
+                        className={classes.large}
+                      />
+                    )}
+                    <span>{prop.student_name}</span>{" "}
+                  </td>
         <td>{prop.national_id}</td>
         <td>{prop.type_name}</td>
         <td>{prop.gender_name}</td>
@@ -157,7 +157,7 @@ export default function AppTable(props) {
           {tableData.length > 0 ? (
             tableData.map((prop) => {
               return (
-                <Grid xs={12} sm={6} md={6} item className={classes.addPadding} key={prop.key}>
+                <Grid xs={12} sm={6} md={6} item className={classes.addPadding} key={prop.id}>
                   <Card className={classes.cardMargin}>
                     <CardActionArea>
                       <CardContent>
@@ -323,7 +323,6 @@ export default function AppTable(props) {
                           سجل المدفوعات
                         </MenuItem>
                         <MenuItem
-                          // name={prop.id}
                           onClick={() => {
                             test();
                           }}

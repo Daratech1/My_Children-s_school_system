@@ -1,16 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Checkbox from "@mui/material/Checkbox";
 import { useHistory } from "react-router-dom";
 import RegularButton from "components/CustomButtons/Button";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 import { makeStyles } from "@material-ui/core/styles";
+import Stack from "@mui/material/Stack";
+import CircularProgress from "@mui/material/CircularProgress";
+
 import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
-import Button from "@material-ui/core/Button";
+
+import moment from "moment";
+import "moment/locale/ar";
+import { fill } from "lodash";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,6 +28,9 @@ const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
     minWidth: "30%",
+  },
+  label: {
+    color: "#322165",
   },
   pair_Moving: {
     padding: "10px",
@@ -43,9 +53,21 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const PricingTable = ({ plans , tableData }) => {
-  let history = useHistory();
-  const [value, setValue] = React.useState("1");
+const PricingTable = ({
+  plans,
+  sendPlanInfo,
+  transportations,
+  appId,
+  handleShow,
+  applications,
+}) => {
+  const classes = useStyles();
+
+  const [value, setValue] = React.useState(1);
+  const [transportation, setTransportation] = useState(false);
+  const [transId, setTransId] = useState(0);
+  const [transWay, setTransWay] = useState(0);
+  const [transWayValue, setTransWayValue] = useState(0);
 
   const handleChange = (event) => {
     setValue(event.target.value);
@@ -63,76 +85,137 @@ const PricingTable = ({ plans , tableData }) => {
     checked: {},
   })((props) => <Checkbox color="default" {...props} />);
 
-  const [checked, setChecked] = React.useState(false);
-
-  const handleChangeCheck = (event) => {
-    setChecked(event.target.checked);
+  const handleTransRequired = (e) => {
+    setTransportation(e.target.checked);
   };
-
-
-
-  const classes = useStyles();
-  const [age, setAge] = React.useState("");
-  const [open, setOpen] = React.useState(false);
-  const [age2, setAge2] = React.useState("");
-  const [open2, setOpen2] = React.useState(false);
-  
-  const handleChangeSelect = (event) => {
-    setAge(event.target.value);
+  const handleSelectTransType = () => {
+    return (
+      transportations &&
+      transportations.map((item) => (
+        <option key={item.id} value={item.id}>
+          {item.transportation_type}
+        </option>
+      ))
+    );
   };
-
-  const handleCloseSelect = () => {
-    setOpen(false);
+  const handleTransType = (e) => {
+    setTransId(e.target.value);
   };
-
-  const handleOpenSelect = () => {
-    setOpen(true);
+  const handleTransWay = (e) => {
+    setTransWayValue(e.target.value);
+    switch (e.target.value) {
+      case "1":
+        setTransWay("annual_fees");
+        break;
+      case "2":
+        setTransWay("semester_fees");
+        break;
+      case "3":
+        setTransWay("monthly_fees");
+        break;
+      default:
+        break;
+    }
   };
-  
-  const handleChangeSelect2 = (event) => {
-    setAge2(event.target.value);
-    };
+  const handleTransPay = () => {
+    const item = transportations.find((o) => o.id == transId);
 
-  const handleCloseSelect2 = () => {
-    setOpen2(false);
+    if (transId == 0) {
+      return null;
+    } else {
+      return item[transWay];
+    }
   };
-
-  const handleOpenSelect2 = () => {
-    setOpen2(true);
+  const checkStatusApp = () => {
+    const result = applications.find((o) => o.id == appId).status_id;
+    if (result > 3) {
+      return (
+        <RegularButton variant="contained" color="primary" disabled>
+          غير متاح في هذه المرحلة
+        </RegularButton>
+      );
+    } else {
+      return (
+        <RegularButton
+          variant="contained"
+          color="primary"
+          onClick={() => sendPlan()}
+        >
+          تحويل
+        </RegularButton>
+      );
+    }
   };
-  
+  const sendPlan = () => {
+    let final;
+    if (transportation) {
+      final = {
+        plan_id: value,
+        transportation_required: transportation ? 1 : 0,
+        transportation_id: transId,
+        transportation_payment: transWayValue,
+      };
+    } else {
+      final = {
+        plan_id: value,
+        transportation_required: transportation ? 1 : 0,
+      };
+    }
+    sendPlanInfo(appId, final);
+    handleShow();
+  };
   return (
     <div className="pricing-table">
       <h2>اختر خطة الدفع</h2>
       <div className="pricing-items">
-        {plans &&
+        {plans.length > 0 ? (
           plans.map((prop) => (
             <div
               className={`${prop.id == value ? "item active" : "item"}`}
               key={prop.id}
               onClick={() => handleChoose(prop.id)}
             >
-              <div className="discount">
-                <span className="number">{prop.id}0%</span> خصم
-              </div>
+              {prop.is_discounted && (
+                <div className="discount">
+                  <span className="number">{prop.discount_rate}%</span> خصم
+                </div>
+              )}
               <h4 className="title-item">{prop.plan_name} </h4>
               <ul>
                 <li>
                   <span className="name">القيمة:</span>
-                  <span className="value">{prop.cost}</span>
+                  <span className="value"> {prop.ammount_before_discount}</span>
                 </li>
                 <li>
-                  <span className="name">القيمة بعد الخصم:</span>
-                  <span className="value">{prop.after_discount}</span>
+                  <span className="name"> عدد الاقساط:</span>
+                  <span className="value"> {prop.installments}</span>
                 </li>
-                <li>
-                  <span className="name">دفع فوري:</span>
-                  <span className="value">{prop.pay_now}</span>
-                </li>
+                {prop.is_discounted && (
+                  <>
+                    <li>
+                      <span className="name">القيمة بعد الخصم:</span>
+                      <span className="value">
+                        {" "}
+                        {prop.ammount_after_discount}
+                      </span>
+                    </li>
+
+                    <li>
+                      <span className="name"> صالح حتى:</span>
+                      <span className="value">
+                        {" "}
+                        {moment(prop.Valid_until)
+                          .locale("ar")
+                          .format("dddd_ ll ")}
+                      </span>
+                    </li>
+                  </>
+                )}
               </ul>
               <hr />
               <div className="money-dis">
-                <span>{Math.floor(prop.after_discount) - Math.floor(prop.pay_now)}</span> وفر / رس
+                <span>{prop.is_discounted ? prop.discount_ammount : 0}</span>{" "}
+                وفر / رس
               </div>{" "}
               <div className="select-plan">
                 <GreenCheckbox
@@ -143,100 +226,85 @@ const PricingTable = ({ plans , tableData }) => {
                 />
               </div>
             </div>
-          ))}
+          ))
+        ) : (
+          <CircularProgress color="secondary" />
+        )}
       </div>
 
-      <div className={classes.pair_Moving}>
-        <div className="pair_checkbox">
-          <Checkbox
-            id="myCheck"
-            checked={checked}
-            onChange={handleChangeCheck}
-            inputProps={{ "aria-label": "primary checkbox" }}
+      <Grid container spacing={1} style={{ alignItems: "flex-end" }}>
+        <Grid item xs={12} sm={12}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={transportation}
+                onChange={(e) => handleTransRequired(e)}
+                name="transportation_required"
+                sx={{
+                  color: "#2A2666",
+                  "&.Mui-checked": {
+                    color: "#2A2666",
+                  },
+                  "& .MuiSvgIcon-root": { fontSize: 28 },
+                }}
+              />
+            }
+            label="الإشتراك  فى خدمة النقل"
           />
-          <label style={{ cursor: "pointer" }} htmlFor="myCheck">
-            {" "}
-            الأشتراك في خدمه النقل{" "}
-          </label>
-        </div>
+        </Grid>
+        {transportation && (
+          <>
+            <Grid item xs={4} sm={4}>
+              <div className="form-group">
+                <label className={classes.label}>خدمة النقل</label>
+                <select
+                  name="transportation_id"
+                  onChange={(e) => handleTransType(e)}
+                  value={transId}
+                >
+                  <option value="0" disabled>
+                    إختر الخدمة
+                  </option>
+                  {handleSelectTransType()}
+                </select>
+              </div>
+            </Grid>
+            <Grid item xs={4} sm={4}>
+              <div className="form-group">
+                <label className={classes.label}>طريقة السداد </label>
+                <select
+                  name="transportation_payment"
+                  onChange={(e) => handleTransWay(e)}
+                  value={transWay}
+                >
+                  <option value="0" disabled>
+                    إختر الطريقة
+                  </option>
+                  <option value="1">سنوي</option>
+                  <option value="2">فصلى</option>
+                  <option value="3">شهري</option>
+                </select>
+              </div>
+            </Grid>
+            {transWay !== 0 ? (
+              <Grid item xs={4} sm={4}>
+                <Typography
+                  component="h6"
+                  variant="h6"
+                  align="right"
+                  style={{ lineHeight: "2.6" }}
+                >
+                  تكلفة الخدمة: {transWay && handleTransPay()}
+                </Typography>
+              </Grid>
+            ) : (
+              <></>
+            )}
+          </>
+        )}
+      </Grid>
 
-        <div className={classes.pair_selectbox}>
-          {checked === true ? (
-            <FormControl className={classes.formControl}>
-              <InputLabel
-                id="demo-controlled-open-select-label"
-                style={{ left: "inherit", right: "0", top: "-5px" }}
-              >
-                أختر النوع
-              </InputLabel>
-              <Select
-                className={classes.removeBefore}
-                labelId="demo-controlled-open-select-label"
-                id="demo-controlled-open-select"
-                open={open}
-                onClose={handleCloseSelect}
-                onOpen={handleOpenSelect}
-                value={age}
-                onChange={handleChangeSelect}
-              >
-                <MenuItem value="">
-                  <em>لاشئ</em>
-                </MenuItem>
-                <MenuItem value={10}>ذهاب</MenuItem>
-                <MenuItem value={20}>عوده</MenuItem>
-                <MenuItem value={30}>ذهاب و عوده</MenuItem>
-              </Select>
-            </FormControl>
-          ) : null}
-
-          {age !== "" && checked === true ? (
-            <FormControl className={classes.formControl}>
-              <InputLabel
-                id="demo-controlled-open-select-label"
-                style={{ left: "inherit", right: "0", top: "-5px" }}
-              >
-                أختر المده
-              </InputLabel>
-              <Select
-                className={classes.removeBefore}
-                labelId="demo-controlled-open-select-label"
-                id="demo-controlled-open-select"
-                open={open2}
-                onClose={handleCloseSelect2}
-                onOpen={handleOpenSelect2}
-                value={age2}
-                onChange={handleChangeSelect2}
-              >
-                <MenuItem value="">
-                  <em>لاشئ</em>
-                </MenuItem>
-                <MenuItem value={10}>سانوي</MenuItem>
-                <MenuItem value={20}>فصلي</MenuItem>
-                <MenuItem value={30}> شهري </MenuItem>
-              </Select>
-            </FormControl>
-          ) : null}
-
-         {checked === true ? <span style={{ marginTop: "15px" }}>SAR {age + age2}</span> : null}
-        </div>
-        <Button
-            variant="contained"
-            color="primary"
-            style={{ marginTop: "15px" }}
-          >
-            تأكيد
-          </Button>
-      </div>
-
-      <div className="plan-action">
-        <RegularButton
-          variant="contained"
-          color="primary"
-          onClick={() => history.push(`/admin/payment`)}
-        >
-          تحويل
-        </RegularButton>
-      </div>
+      <div className="plan-action">{checkStatusApp()}</div>
     </div>
   );
 };

@@ -373,8 +373,8 @@ const Reports = ({
           >
             <Tab label="الغياب" {...a11yProps(0)} />
             <Tab label="الأستئذان" {...a11yProps(1)} />
-            <Tab label="المشاركه" {...a11yProps(2)} />
-            <Tab label="Item Four" {...a11yProps(3)} />
+            {/* <Tab label="المشاركه" {...a11yProps(2)} />
+            <Tab label="Item Four" {...a11yProps(3)} /> */}
           </Tabs>
         </AppBar>
       </div>

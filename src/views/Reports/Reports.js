@@ -27,7 +27,10 @@ import { withStyles } from "@material-ui/core/styles";
 import { green } from "@material-ui/core/colors";
 import Radio from "@material-ui/core/Radio";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import { MuiPickersUtilsProvider, KeyboardDatePicker } from "@material-ui/pickers";
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from "@material-ui/pickers";
 import { getReportsShareMethode } from "../../action/reportsAction";
 import { getReportsAttandanceMethode } from "../../action/reportAttandanceAction";
 import { getStudents } from "../../action/students";
@@ -35,7 +38,8 @@ import { getApplication } from "../../action/applications";
 import { getStaticData } from "../../action/data";
 import { useHistory } from "react-router-dom";
 import { xorBy } from "lodash";
-
+import Animations from "./LoadingComponent/LoadingComponent";
+import SimpleBackdrop from "./BackDrop/BackDrop";
 const GreenRadio = withStyles({
   root: {
     color: green[400],
@@ -76,7 +80,6 @@ function a11yProps(index) {
   return {
     id: `scrollable-force-tab-${index}`,
     "aria-controls": `scrollable-force-tabpanel-${index}`,
-
   };
 }
 
@@ -134,7 +137,6 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: "1px 1px 2px #aaa",
     fontSize: "14px",
   },
-
 }));
 
 // table
@@ -173,8 +175,9 @@ const Reports = ({
   const [value, setValue] = useState(0);
   // for sub tabs
   const [valueSubTabs, setValueSubTabs] = useState(0);
-  // for select student name 
+  // for select student name
   const [selectValue, setSelectValue] = useState("all");
+  const [selectValueForClass, setSelectValueForClass] = useState("all");
   // for select class sesson
   const [selectClassValue, setSelectClassValue] = useState("all");
   // start date
@@ -185,7 +188,9 @@ const Reports = ({
   const [selectedDateend, setSelectedDateend] = useState(new Date());
   // for radio button
   const [selectedValueradio, setSelectedValueradio] = useState("a");
-  
+
+  const [open, setOpen] = React.useState(true);
+
   // for radio button function
   const handleChangeradio = (event) => {
     setSelectedValueradio(event.target.value);
@@ -211,33 +216,36 @@ const Reports = ({
     setSelectedDateend(date);
   };
 
-  // for select student name func
+  // for select student name func for dalay report
   const handelSelectValue = (e) => {
     setSelectValue(e.target.value);
+  };
+  // for select student name func for class report
+  const handelSelectValueForClass = (e) => {
+    setSelectValueForClass(e.target.value);
   };
 
   // for select class sesson func
   const handelSelectClassValue = (e) => {
     setSelectClassValue(e.target.value);
   };
-const handelPDF =()=>{
-
-  const x = reportsData_ATTA.data;
-  const y = reportsData_PER.data
-  switch (valueSubTabs) {
-    case 0:
-     localStorage.setItem("reportData",JSON.stringify(x)) 
-      break;
+  const handelPDF = () => {
+    const x = reportsData_ATTA.data;
+    const y = reportsData_PER.data;
+    switch (valueSubTabs) {
+      case 0:
+        localStorage.setItem("reportData", JSON.stringify(x));
+        break;
       case 1:
-        localStorage.setItem("reportData",JSON.stringify(y)) 
+        localStorage.setItem("reportData", JSON.stringify(y));
 
         break;
-    
-    default:
-      break;
-  }
-  history.push(`/reports?reportType=${valueSubTabs}`)
-}
+
+      default:
+        break;
+    }
+    history.push(`/reports?reportType=${valueSubTabs}`);
+  };
   // Start Date vars
   var curr_date_s = selectedDatestart.getDate();
   var curr_month_s = selectedDatestart.getMonth() + 1;
@@ -249,15 +257,14 @@ const handelPDF =()=>{
   var curr_month_E = selectedDateend.getMonth() + 1;
   var curr_year_E = selectedDateend.getFullYear();
   var finalEndDate = curr_year_E + "-" + curr_month_E + "-" + curr_date_E;
-  
-  
+
   // Start call reports Data
   useEffect(() => {
     // لو في التقارير اليوميه
     if (value === 0) {
       // لو مختار تحديد تاريخ واحد فقط
       if (selectedValueradio === "c") {
-        // الغياب 
+        // الغياب
         if (valueSubTabs === 0) {
           getReportsAttandanceMethode({
             date_from: finalStartDate,
@@ -286,23 +293,31 @@ const handelPDF =()=>{
           });
         }
       }
+      setTimeout(() => {
+        setOpen(false);
+      }, 1000);
     }
+
+    setOpen(true);
 
     // لو في تقارير فصل دراسي
     if (value === 1) {
-      // الغياب 
+      // الغياب
       if (valueSubTabs === 0) {
         getReportsAttandanceMethode({
-          student_id: selectValue,
+          student_id: selectValueForClass,
           semester_id: selectClassValue,
         });
-        // الاستئذان 
+        // الاستئذان
       } else if (valueSubTabs === 1) {
         getReportsShareMethode({
-          student_id: selectValue,
+          student_id: selectValueForClass,
           semester_id: selectClassValue,
         });
       }
+      setTimeout(() => {
+        setOpen(false);
+      }, 1000);
     }
   }, [
     getReportsAttandanceMethode,
@@ -313,6 +328,7 @@ const handelPDF =()=>{
     selectClassValue,
     value,
     valueSubTabs,
+    selectValueForClass,
   ]);
 
   // get External data
@@ -325,6 +341,7 @@ const handelPDF =()=>{
   // ========================================================================
   return (
     <div className={classes.root}>
+      <SimpleBackdrop open={open} />
       {/* pair Tabs Start */}
 
       <AppBar position="static" color="default">
@@ -354,11 +371,10 @@ const handelPDF =()=>{
             textColor="primary"
             aria-label="scrollable force tabs example"
           >
-            <Tab label="الغياب"  {...a11yProps(0)} />
-            <Tab label="الأستئذان"  {...a11yProps(1)} />
-            <Tab label="المشاركه"  {...a11yProps(2)} />
-            <Tab label="Item Four"  {...a11yProps(3)} />
-            
+            <Tab label="الغياب" {...a11yProps(0)} />
+            <Tab label="الأستئذان" {...a11yProps(1)} />
+            <Tab label="المشاركه" {...a11yProps(2)} />
+            <Tab label="Item Four" {...a11yProps(3)} />
           </Tabs>
         </AppBar>
       </div>
@@ -367,7 +383,6 @@ const handelPDF =()=>{
       {/* //////////////////////////////////////////////////////////////////////////////////////// */}
       {/* TAB1 */}
       <TabPanel value={value} index={0} dir={theme.direction}>
-        
         <div className={classes.pair_radio}>
           <FormControlLabel
             value="start"
@@ -456,135 +471,144 @@ const handelPDF =()=>{
                       </MenuItem>
                     );
                   })}
-
-                <ListSubheader>قائمه الانتظار</ListSubheader>
-                {applications &&
-                  applications.map((ele, i) => {
-                    return (
-                      <MenuItem value={ele.id}>{ele.student_name}</MenuItem>
-                    );
-                  })}
               </Select>
             </FormControl>
-            {(reportsData_ATTA.data  && reportsData_ATTA.data.report.length > 0  ) && (reportsData_PER.data  && reportsData_PER.data.report.length > 0  ) &&
-             <Button variant="contained" color="primary" onClick={()=>handelPDF()}>
-             مشاهدة التقرير
-           </Button>
-            }
-           
+            {reportsData_ATTA.data &&
+              reportsData_ATTA.data.report.length > 0 &&
+              reportsData_PER.data &&
+              reportsData_PER.data.report.length > 0 && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => handelPDF()}
+                >
+                  مشاهدة التقرير
+                </Button>
+              )}
           </Grid>
         </MuiPickersUtilsProvider>
         {/* Tab1 Header End */}
 
         {/* جدول الغياب start */}
         <TabPanel value={valueSubTabs} index={0}>
+          <h5 align="center" className={classes.tabelHeaderS}>
+            {reportsData_ATTA.data && reportsData_ATTA.data.report_title}
+          </h5>
           <TableContainer component={Paper}>
-            <h5 align="center" className={classes.tabelHeaderS}>
-              {reportsData_ATTA.data && reportsData_ATTA.data.report_title}
-            </h5>
-            <Table className={classes.table} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="center">
-                    {reportsData_ATTA.data &&
-                      reportsData_ATTA.data.headers.student_name}
-                  </TableCell>
-                  <TableCell align="center">
-                    {reportsData_ATTA.data &&
-                      reportsData_ATTA.data.headers.reason}
-                  </TableCell>
-                  <TableCell align="center">
-                    {reportsData_ATTA.data &&
-                      reportsData_ATTA.data.headers.absent_date}
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {reportsData_ATTA.data &&
-                  reportsData_ATTA.data.report.map((ele, i) => (
-                    <TableRow key={i}>
-                      <TableCell align="center" component="th" scope="row">
-                        {ele.student_name}
-                      </TableCell>
-                      <TableCell align="center">{ele.reason}</TableCell>
-                      <TableCell align="center">{ele.absent_date}</TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
+            {reportsData_ATTA.data &&
+            reportsData_ATTA.data.report.length > 0 ? (
+              <Table className={classes.table} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell align="center">
+                      {reportsData_ATTA.data &&
+                        reportsData_ATTA.data.headers.student_name}
+                    </TableCell>
+                    <TableCell align="center">
+                      {reportsData_ATTA.data &&
+                        reportsData_ATTA.data.headers.reason}
+                    </TableCell>
+                    <TableCell align="center">
+                      {reportsData_ATTA.data &&
+                        reportsData_ATTA.data.headers.absent_date}
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {reportsData_ATTA.data &&
+                    reportsData_ATTA.data.report.map((ele, i) => (
+                      <TableRow key={i}>
+                        <TableCell align="center" component="th" scope="row">
+                          {ele.student_name}
+                        </TableCell>
+                        <TableCell align="center">{ele.reason}</TableCell>
+                        <TableCell align="center">{ele.absent_date}</TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <Animations />
+            )}
           </TableContainer>
         </TabPanel>
         {/* جدول الغياب End */}
 
         {/* جدول الاستئذان start */}
         <TabPanel value={valueSubTabs} index={1}>
+          <h5 align="center" className={classes.tabelHeaderS}>
+            {reportsData_PER.data && reportsData_PER.data.report_title}
+          </h5>
           <TableContainer component={Paper}>
-            <h5 align="center" className={classes.tabelHeaderS}>
-              {reportsData_PER.data && reportsData_PER.data.report_title}
-            </h5>
-            <Table className={classes.table} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="center">
-                    {reportsData_PER.data &&
-                      reportsData_PER.data.headers.student_name}
-                  </TableCell>
-                  <TableCell align="center">
-                    {reportsData_PER.data &&
-                      reportsData_PER.data.headers.case_name}
-                  </TableCell>
-                  <TableCell align="center">
-                    {reportsData_PER.data &&
-                      reportsData_PER.data.headers.permission_duration}
-                  </TableCell>
-                  <TableCell align="center">
-                    {reportsData_PER.data &&
-                      reportsData_PER.data.headers.permission_reson}
-                  </TableCell>
-                  <TableCell align="center">
-                    {reportsData_PER.data &&
-                      reportsData_PER.data.headers.pickup_persion}
-                  </TableCell>
-                  <TableCell align="center">
-                    {reportsData_PER.data &&
-                      reportsData_PER.data.headers.pickup_time}
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {reportsData_PER.data &&
-                  reportsData_PER.data.report.map((ele, i) => (
-                    <TableRow key={i}>
-                      <TableCell align="center" component="th" scope="row">
-                        {ele.student_name}
-                      </TableCell>
-                      <TableCell
-                        align="center"
-                        style={{
-                          color:
-                            ele.case_color === "warning"
-                              ? "#ffbc00"
-                              : ele.case_color === "danger"
-                              ? "red "
-                              : ele.case_color === "success"
-                              ? "#00c300"
-                              : "",
-                        }}
-                      >
-                        {ele.case_name}
-                      </TableCell>
-                      <TableCell align="center">
-                        {ele.permission_duration}
-                      </TableCell>
-                      <TableCell align="center">
-                        {ele.permission_reson}
-                      </TableCell>
-                      <TableCell align="center">{ele.pickup_persion}</TableCell>
-                      <TableCell align="center">{ele.pickup_time}</TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
+            {reportsData_PER.data && reportsData_PER.data.report.length > 0 ? (
+              <Table className={classes.table} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell align="center">
+                      {reportsData_PER.data &&
+                        reportsData_PER.data.headers.student_name}
+                    </TableCell>
+                    <TableCell align="center">
+                      {reportsData_PER.data &&
+                        reportsData_PER.data.headers.case_name}
+                    </TableCell>
+                    <TableCell align="center">
+                      {reportsData_PER.data &&
+                        reportsData_PER.data.headers.permission_duration}
+                    </TableCell>
+                    <TableCell align="center">
+                      {reportsData_PER.data &&
+                        reportsData_PER.data.headers.permission_reson}
+                    </TableCell>
+                    <TableCell align="center">
+                      {reportsData_PER.data &&
+                        reportsData_PER.data.headers.pickup_persion}
+                    </TableCell>
+                    <TableCell align="center">
+                      {reportsData_PER.data &&
+                        reportsData_PER.data.headers.pickup_time}
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {reportsData_PER.data &&
+                    reportsData_PER.data.report.map((ele, i) => (
+                      <TableRow key={i}>
+                        <TableCell align="center" component="th" scope="row">
+                          {ele.student_name}
+                        </TableCell>
+                        <TableCell
+                          align="center"
+                          style={{
+                            color:
+                              ele.case_color === "warning"
+                                ? "#ffbc00"
+                                : ele.case_color === "danger"
+                                ? "red "
+                                : ele.case_color === "success"
+                                ? "#00c300"
+                                : "",
+                          }}
+                        >
+                          {ele.case_name}
+                        </TableCell>
+                        <TableCell align="center">
+                          {ele.permission_duration}
+                        </TableCell>
+                        <TableCell align="center">
+                          {ele.permission_reson}
+                        </TableCell>
+                        <TableCell align="center">
+                          {ele.pickup_persion}
+                        </TableCell>
+                        <TableCell align="center">{ele.pickup_time}</TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <Animations />
+            )}
           </TableContainer>
         </TabPanel>
         {/* جدول الاستئذان End */}
@@ -593,7 +617,6 @@ const handelPDF =()=>{
       {/* ////////////////////////////////////////////////////////////////////////////////////////// */}
       {/* TAB2 */}
       <TabPanel value={value} index={1} dir={theme.direction}>
-        
         {/* Tab2 Header start */}
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
           <Grid className={classes.pair_dates}>
@@ -622,131 +645,168 @@ const handelPDF =()=>{
                   })}
               </Select>
             </FormControl>
-            {(reportsData_ATTA.data  && reportsData_ATTA.data.report.length > 0  ) && (reportsData_PER.data  && reportsData_PER.data.report.length > 0  ) &&
-             <Button variant="contained" color="primary" onClick={()=>handelPDF()}>
-             مشاهدة التقرير
-           </Button>
-            }
-           
+            <FormControl className={(classes.formControl, classes.width_c)}>
+              <InputLabel htmlFor="grouped-select">حدد الطالب\ه</InputLabel>
+              <Select
+                defaultValue=""
+                id="grouped-select"
+                onChange={(e) => handelSelectValueForClass(e)}
+              >
+                <MenuItem value="all">
+                  <em>جمع الطلاب</em>
+                </MenuItem>
+                <ListSubheader>الطلاب المقيدين</ListSubheader>
+
+                {students &&
+                  students.map((ele, i) => {
+                    return (
+                      <MenuItem key={i} value={ele.id}>
+                        {ele.student_name}
+                      </MenuItem>
+                    );
+                  })}
+              </Select>
+            </FormControl>
+            {reportsData_ATTA.data &&
+              reportsData_ATTA.data.report.length > 0 &&
+              reportsData_PER.data &&
+              reportsData_PER.data.report.length > 0 && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => handelPDF()}
+                >
+                  مشاهدة التقرير
+                </Button>
+              )}
           </Grid>
         </MuiPickersUtilsProvider>
         {/* Tab2 header End */}
 
         {/*جدول الغياب  start*/}
         <TabPanel value={valueSubTabs} index={0}>
+          <h5 align="center" className={classes.tabelHeaderS}>
+            {reportsData_ATTA.data && reportsData_ATTA.data.report_title}
+          </h5>
           <TableContainer component={Paper}>
-            <h5 align="center" className={classes.tabelHeaderS}>
-              {reportsData_ATTA.data && reportsData_ATTA.data.report_title}
-            </h5>
-            <Table className={classes.table} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="center">
-                    {reportsData_ATTA.data &&
-                      reportsData_ATTA.data.headers.student_name}
-                  </TableCell>
-                  <TableCell align="center">
-                    {reportsData_ATTA.data &&
-                      reportsData_ATTA.data.headers.reason}
-                  </TableCell>
-                  <TableCell align="center">
-                    {reportsData_ATTA.data &&
-                      reportsData_ATTA.data.headers.absent_date}
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {reportsData_ATTA.data &&
-                  reportsData_ATTA.data.report.map((ele, i) => (
-                    <TableRow key={i}>
-                      <TableCell align="center" component="th" scope="row">
-                        {ele.student_name}
-                      </TableCell>
-                      <TableCell align="center">{ele.reason}</TableCell>
-                      <TableCell align="center">{ele.absent_date}</TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
+            {reportsData_ATTA.data &&
+            reportsData_ATTA.data.report.length > 0 ? (
+              <Table className={classes.table} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell align="center">
+                      {reportsData_ATTA.data &&
+                        reportsData_ATTA.data.headers.student_name}
+                    </TableCell>
+                    <TableCell align="center">
+                      {reportsData_ATTA.data &&
+                        reportsData_ATTA.data.headers.reason}
+                    </TableCell>
+                    <TableCell align="center">
+                      {reportsData_ATTA.data &&
+                        reportsData_ATTA.data.headers.absent_date}
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {reportsData_ATTA.data &&
+                    reportsData_ATTA.data.report.map((ele, i) => (
+                      <TableRow key={i}>
+                        <TableCell align="center" component="th" scope="row">
+                          {ele.student_name}
+                        </TableCell>
+                        <TableCell align="center">{ele.reason}</TableCell>
+                        <TableCell align="center">{ele.absent_date}</TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <Animations />
+            )}
           </TableContainer>
         </TabPanel>
         {/*جدول الغياب End  */}
 
         {/* جدول الاستئذان start */}
         <TabPanel value={valueSubTabs} index={1}>
+          <h5 align="center" className={classes.tabelHeaderS}>
+            {reportsData_PER.data && reportsData_PER.data.report_title}
+          </h5>
           <TableContainer component={Paper}>
-            <h5 align="center" className={classes.tabelHeaderS}>
-              {reportsData_PER.data && reportsData_PER.data.report_title}
-            </h5>
-            <Table className={classes.table} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="center">
-                    {reportsData_PER.data &&
-                      reportsData_PER.data.headers.student_name}
-                  </TableCell>
-                  <TableCell align="center">
-                    {reportsData_PER.data &&
-                      reportsData_PER.data.headers.case_name}
-                  </TableCell>
-                  <TableCell align="center">
-                    {reportsData_PER.data &&
-                      reportsData_PER.data.headers.permission_duration}
-                  </TableCell>
-                  <TableCell align="center">
-                    {reportsData_PER.data &&
-                      reportsData_PER.data.headers.permission_reson}
-                  </TableCell>
-                  <TableCell align="center">
-                    {reportsData_PER.data &&
-                      reportsData_PER.data.headers.pickup_persion}
-                  </TableCell>
-                  <TableCell align="center">
-                    {reportsData_PER.data &&
-                      reportsData_PER.data.headers.pickup_time}
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {reportsData_PER.data &&
-                  reportsData_PER.data.report.map((ele, i) => (
-                    <TableRow key={i}>
-                      <TableCell align="center" component="th" scope="row">
-                        {ele.student_name}
-                      </TableCell>
-                      <TableCell
-                        align="center"
-                        style={{
-                          color:
-                            ele.case_color === "warning"
-                              ? "#ffbc00"
-                              : ele.case_color === "danger"
-                              ? "red "
-                              : ele.case_color === "success"
-                              ? "#00c300"
-                              : "",
-                        }}
-                      >
-                        {ele.case_name}
-                      </TableCell>
-                      <TableCell align="center">
-                        {ele.permission_duration}
-                      </TableCell>
-                      <TableCell align="center">
-                        {ele.permission_reson}
-                      </TableCell>
-                      <TableCell align="center">{ele.pickup_persion}</TableCell>
-                      <TableCell align="center">{ele.pickup_time}</TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
+            {reportsData_PER.data && reportsData_PER.data.report.length > 0 ? (
+              <Table className={classes.table} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell align="center">
+                      {reportsData_PER.data &&
+                        reportsData_PER.data.headers.student_name}
+                    </TableCell>
+                    <TableCell align="center">
+                      {reportsData_PER.data &&
+                        reportsData_PER.data.headers.case_name}
+                    </TableCell>
+                    <TableCell align="center">
+                      {reportsData_PER.data &&
+                        reportsData_PER.data.headers.permission_duration}
+                    </TableCell>
+                    <TableCell align="center">
+                      {reportsData_PER.data &&
+                        reportsData_PER.data.headers.permission_reson}
+                    </TableCell>
+                    <TableCell align="center">
+                      {reportsData_PER.data &&
+                        reportsData_PER.data.headers.pickup_persion}
+                    </TableCell>
+                    <TableCell align="center">
+                      {reportsData_PER.data &&
+                        reportsData_PER.data.headers.pickup_time}
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {reportsData_PER.data &&
+                    reportsData_PER.data.report.map((ele, i) => (
+                      <TableRow key={i}>
+                        <TableCell align="center" component="th" scope="row">
+                          {ele.student_name}
+                        </TableCell>
+                        <TableCell
+                          align="center"
+                          style={{
+                            color:
+                              ele.case_color === "warning"
+                                ? "#ffbc00"
+                                : ele.case_color === "danger"
+                                ? "red "
+                                : ele.case_color === "success"
+                                ? "#00c300"
+                                : "",
+                          }}
+                        >
+                          {ele.case_name}
+                        </TableCell>
+                        <TableCell align="center">
+                          {ele.permission_duration}
+                        </TableCell>
+                        <TableCell align="center">
+                          {ele.permission_reson}
+                        </TableCell>
+                        <TableCell align="center">
+                          {ele.pickup_persion}
+                        </TableCell>
+                        <TableCell align="center">{ele.pickup_time}</TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <Animations />
+            )}
           </TableContainer>
         </TabPanel>
         {/* جدول الاستئذان End */}
-
       </TabPanel>
-
     </div>
   );
 };
@@ -777,4 +837,3 @@ export default connect(mapStateToProps, {
   getApplication,
   getStaticData,
 })(Reports);
-

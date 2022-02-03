@@ -40,6 +40,7 @@ import { useHistory } from "react-router-dom";
 import { xorBy } from "lodash";
 import Animations from "./LoadingComponent/LoadingComponent";
 import SimpleBackdrop from "./BackDrop/BackDrop";
+import moment from "moment";
 const GreenRadio = withStyles({
   root: {
     color: green[400],
@@ -190,6 +191,11 @@ const Reports = ({
   const [selectedValueradio, setSelectedValueradio] = useState("a");
 
   const [open, setOpen] = React.useState(true);
+
+  let a = moment();
+
+  moment.locale('ar')
+
 
   // for radio button function
   const handleChangeradio = (event) => {
@@ -601,7 +607,10 @@ const Reports = ({
                         <TableCell align="center">
                           {ele.pickup_persion}
                         </TableCell>
-                        <TableCell align="center">{ele.pickup_time}</TableCell>
+                        <TableCell align="center">
+                        {moment(ele.pickup_time).locale('ar').format("dddd_ ll __ h:mm a ")}
+                          
+                          </TableCell>
                       </TableRow>
                     ))}
                 </TableBody>
@@ -795,7 +804,10 @@ const Reports = ({
                         <TableCell align="center">
                           {ele.pickup_persion}
                         </TableCell>
-                        <TableCell align="center">{ele.pickup_time}</TableCell>
+                        <TableCell align="center">
+                        {moment(ele.pickup_time).locale('ar').format("dddd_ ll __ h:mm a ")}
+                          
+                         </TableCell>
                       </TableRow>
                     ))}
                 </TableBody>

@@ -64,7 +64,7 @@ const tableStyle = (theme) => ({
     padding:"5px"
   },
   spaceAround:{
-    justifyContent:"space-between",
+    justifyContent:"flex-end",
     flexWrap:"wrap",
   }
   ,

@@ -14,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
   flexPromo: {
     display: "flex",
     justifyContent: "space-between",
+    marginBottom:"15px"
   },
   promoInput: {
     padding: "7px",
@@ -74,6 +75,7 @@ const Coupon = ({
   transactionId,
   getCouponMethode,
   couponData: { couponData },
+  getcouopnvalue
 }) => {
   const classes = useStyles();
   const [couponValue, setCouponValue] = useState("");
@@ -85,26 +87,30 @@ const Coupon = ({
     e.preventDefault();
     if (couponValue !== "") {
       getCouponMethode(studentId, transactionId, { coupon: couponValue });
+      getcouopnvalue(couponValue)
       document.getElementById("d-block").style.display = "block"
     }
+    
   };
+  
 useEffect(() => {
   getCouponMethode(studentId, transactionId,{coupon:couponValue});
 } , [studentId , transactionId])
 
   return (
     <>
+     
+      
       <Grid
         item
         md={12}
         xs={12}
-        style={{ padding: "0 10px", marginBottom: "15px" }}
+        style={{ padding: "0 10px", marginBottom: "15px", marginTop:"10px" }}
       >
         <span>المبلغ المستحق: </span>
 
         <span className={classes.storNumber}>
-          {window.localStorage.getItem("valueone") -
-            window.localStorage.getItem("valuetwo")}
+          {couponData.data && couponData.data.amount_before_discount }
         </span>
         <span style={{ color: "gray" }}> ر.س </span>
       </Grid>
@@ -124,6 +130,8 @@ useEffect(() => {
           <span style={{ color: "gray" }}> ر.س </span>
         </Grid>
       ) : null}
+
+       
 
       {couponData.data !== undefined &&
       couponData.data.coupon_discount &&
@@ -194,10 +202,10 @@ useEffect(() => {
 
         {couponData.data !== undefined &&
         couponData.data.amount_after_discount &&
-        // (
+        (
             couponData.data.is_coupon_valid 
-        //     ||
-        //   couponData.data.period_discount != 0)
+            ||
+          couponData.data.period_discount != 0)
            ? (
           <Grid
             item
@@ -207,7 +215,7 @@ useEffect(() => {
           >
             <span>المبلغ بعد الخصم: </span>
 
-            <span className={classes.storNumber2}>
+            <span className={classes.storNumber2} style={{color:"#0ccf87"}}>
               {couponData.data.amount_after_discount}
             </span>
             <span style={{ color: "gray" }}> ر.س </span>

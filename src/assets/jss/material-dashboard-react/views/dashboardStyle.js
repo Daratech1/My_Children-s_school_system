@@ -8,10 +8,10 @@ const dashboardStyle = {
     "&:first-of-type": {
       width: "80%",
       margin: "0 auto",
-      marginTop: "220px",
+      // marginTop: "220px",
       "@media (max-width: 1400px)": {
         width: "100%",
-        marginTop: "90px",
+        // marginTop: "90px",
       },
     },
     "&:nth-of-type(2)": {

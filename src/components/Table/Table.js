@@ -230,6 +230,7 @@ export default function CustomTable(props) {
                     onClick={handleClick}
                   >
                     <Button
+                      style={{display:"none"}}
                       variant="outlined"
                       color="primary"
                       onClick={handleOpen}

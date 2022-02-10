@@ -546,7 +546,7 @@ textarea {
 .chart-box{
   background-color: #fff;
   margin: 0px auto;
-  margin-top: 80px;
+  /* margin-top: 80px; */
   padding: 20px;
   border-radius: 20px;
 }
@@ -678,6 +678,9 @@ textarea {
 .contain {
   display: flex;
 }
+.payment_methods{
+  padding:10px
+}
 .payment_methods h4 {
   font-size: 1rem;
   color: #666;
@@ -711,7 +714,7 @@ textarea {
 }
 
 .form {
-  width: 80%;
+  width: 100%;
   background-color: #fff;
   margin: 10px auto;
   position: relative;
@@ -725,6 +728,7 @@ textarea {
 
 .form .contennt .flexing_items {
   display: flex;
+  justify-content: space-between;
 }
 .form .contennt h4 {
   margin-bottom: 20px;

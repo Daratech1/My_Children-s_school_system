@@ -16,7 +16,7 @@ import { loadUser } from "action/auth";
 const styles = {
   title: {
     color: "#322263 ",
-    padding: "5rem 0 3rem 0",
+    padding: "1rem 0 1rem 0",
   },
   container: {
     padding: "1rem 1rem 1rem 0",

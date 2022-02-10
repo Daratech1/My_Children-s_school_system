@@ -38,7 +38,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 const styles = (theme) => ({
   tables: {
-    marginTop: "70px",
+    // marginTop: "70px",
   },
   cardTable: {
     borderRadius: "20px",
